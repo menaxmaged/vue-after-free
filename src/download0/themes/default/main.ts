@@ -95,7 +95,7 @@ import { fn, BigInt } from 'download0/types'
     } else {
       btnText = new jsmaf.Text()
       btnText.text = menuOptions[i]!.label
-      btnText.x = btnX + buttonWidth / 2 - 60
+      btnText.x = btnX + buttonWidth / 4
       btnText.y = btnY + buttonHeight / 2 - 12
       btnText.style = 'white'
     }

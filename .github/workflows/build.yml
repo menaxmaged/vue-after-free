@@ -32,7 +32,7 @@ jobs:
       - name: Replace version strings
         run: |
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-          TAG="${{ github.event_name == 'release' && github.ref_name || '1.4' }}"
+          TAG="${{ github.event_name == 'release' && github.ref_name || 'CodeX-v1.0' }}"
           find ./dist -type f -name '*.js' -exec sed -i "s/%VERSION_STRING%/${SHORT_SHA}/g" {} +
           find ./dist -type f -name '*.js' -exec sed -i "s/%VERSION_TAG%/${TAG}/g" {} +
 
@@ -93,10 +93,10 @@ jobs:
           cp -r dist/savedata dist-lite/savedata 2>/dev/null || true
 
       - name: Zip dist
-        run: cd dist && zip -r ../vue-after-free-${{ github.ref_name }}.zip download0/ savedata/ && cd ..
+        run: cd dist && zip -r ../CodeX-Edition-${{ github.ref_name }}.zip download0/ savedata/ && cd ..
 
       - name: Zip lite dist
-        run: cd dist-lite && zip -r ../vue-after-free-lite-${{ github.ref_name }}.zip download0/ savedata/ && cd ..
+        run: cd dist-lite && zip -r ../CodeX-Edition-lite-${{ github.ref_name }}.zip download0/ savedata/ && cd ..
 
       - name: Upload dist artifact
         uses: actions/upload-artifact@v4
@@ -107,8 +107,8 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vue-after-free-${{ github.ref_name }}
-          path: vue-after-free-${{ github.ref_name }}.zip
+          name: CodeX-Edition-${{ github.ref_name }}
+          path: CodeX-Edition-${{ github.ref_name }}.zip
 
       - name: Upload lite dist artifact
         uses: actions/upload-artifact@v4
@@ -119,16 +119,16 @@ jobs:
       - name: Upload lite build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vue-after-free-lite-${{ github.ref_name }}
-          path: vue-after-free-lite-${{ github.ref_name }}.zip
+          name: CodeX-Edition-lite-${{ github.ref_name }}
+          path: CodeX-Edition-lite-${{ github.ref_name }}.zip
 
       - name: Upload release assets
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            vue-after-free-${{ github.ref_name }}.zip
-            vue-after-free-lite-${{ github.ref_name }}.zip
+            CodeX-Edition-${{ github.ref_name }}.zip
+            CodeX-Edition-lite-${{ github.ref_name }}.zip
 
   deploy-pages:
     needs: build
