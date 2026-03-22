@@ -543,7 +543,7 @@ export function binloader_init () {
         const thr_id = mem.view(thread_handle).getBigInt(0, true)
         log('Thread handle: ' + thr_id.toString())
         // utils.notify("Payload loaded!\nThread spawned successfully");
-        utils.notify('PWNED! Payload is running...')
+        // utils.notify('PWNED! Payload is running...')
         utils.notify('by Mena Maged')
         // Check if autoclose is enabled
         if (typeof CONFIG !== 'undefined' && CONFIG.autoclose && !BinLoader.skip_autoclose) {
