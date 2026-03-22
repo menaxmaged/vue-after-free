@@ -40,14 +40,13 @@ import { utils, BigInt, mem } from 'download0/types'
   const logoWidth = 600;
   const logoHeight = 338; // مساحة اللوجو بتاعك (16:9)
 
-  const logo = new Image({
-    url: IMAGE_URL,
-    x: 960 - logoWidth / 2, // في النص أفقياً
-    y: 300,                  // المسافة من فوق
-    width: logoWidth,
-    height: logoHeight,
-    visible: true
-  });
+    var logo = new Image({
+      url: 'file:///../download0/img/logo.png',
+      x: 960 - logoWidth / 2,
+      y: 150,
+      width: logoWidth,
+      height: logoHeight
+    })
   jsmaf.root.children.push(logo)
 
   // 4. إضافة النص (CodeX Technologies)
