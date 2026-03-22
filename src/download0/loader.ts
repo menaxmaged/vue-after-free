@@ -109,7 +109,7 @@ if (!is_jailbroken) {
   utils.notify(FW_VERSION + ' Detected!')
 
   let use_lapse = false
-  
+
   if (jb_behavior === 1) {
     log('JB Behavior: NetControl (forced)')
     include('netctrl_c0w_twins.js')
