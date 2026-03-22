@@ -551,7 +551,6 @@ export function binloader_init () {
 
           fn.register(0x14, 'getpid', [], 'bigint')
           fn.register(0x25, 'kill', ['bigint', 'bigint'], 'bigint')
-
           const pid = fn.getpid()
           const pid_num = (pid instanceof BigInt) ? pid.lo : pid
           log('Current PID: ' + pid_num)
