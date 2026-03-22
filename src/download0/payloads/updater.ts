@@ -220,7 +220,33 @@ import { utils } from 'download0/types'
           updateStatus('Found ' + FILES.length + ' files')
           jsmaf.setTimeout(processNext, 500)
         } else {
-          updateStatus('ERROR: Failed to fetch manifest')
+//          updateStatus('ERROR: Failed to fetch manifest')
+          var errorMsg = 'ERROR: ';
+          if (xhr.status === 404) {
+            errorMsg += 'Manifest Not Found (404) - Check URL/Path';
+          } else if (xhr.status === 403) {
+            errorMsg += 'Access Denied (403) - Check GitHub Permissions';
+          } else if (xhr.status === 500) {
+            errorMsg += 'Server Error (500)';
+          } else if (xhr.status === 0) {
+            // الحالة دي غالباً هي اللي عندك (SSL أو DNS)
+            errorMsg += 'Network Blocked/SSL Fail (Status 0)';
+          } else {
+            errorMsg += 'Unexpected Status: ' + xhr.status;
+          }
+          
+          // إظهار الـ URL اللي بنحاول نكلمه عشان نتأكد إنه صح
+          updateStatus(errorMsg);
+          log(errorMsg + ' | URL: ' + MANIFEST_URL);
+          
+          // تريك صايعة: لو مفيش ResponseText خالص
+          if (!xhr.responseText) {
+            log('Empty response from server');
+          }
+        
+
+
+
         }
       }
     }
