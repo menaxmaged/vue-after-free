@@ -163,24 +163,31 @@ import { fn, BigInt, mem } from 'download0/types'
       return
     }
 
-    // Read file content
-    const file_buf = mem.malloc(65536)
-    const bytes_read = read_sys(file_fd, file_buf, new BigInt(0, 65536))
+    // Send headers first; omit Content-Length for streaming
+    const headers = 'HTTP/1.1 200 OK\r\n' +
+                    'Content-Type: ' + content_type + '\r\n' +
+                    'Access-Control-Allow-Origin: *\r\n' +
+                    'Connection: close\r\n\r\n'
+    const h_buf = mem.malloc(headers.length)
+    for (let i = 0; i < headers.length; i++) {
+      mem.view(h_buf).setUint8(i, headers.charCodeAt(i))
+    }
+    write_sys(new BigInt(fd), h_buf, new BigInt(0, headers.length))
+
+    const chunk_size = 65536
+    const file_buf = mem.malloc(chunk_size)
+    let total_sent = 0
+
+    while (true) {
+      const bytes_read = read_sys(file_fd, file_buf, new BigInt(0, chunk_size))
+      if (bytes_read.lo <= 0) break
+
+      write_sys(new BigInt(fd), file_buf, new BigInt(0, bytes_read.lo))
+      total_sent += bytes_read.lo
+    }
+
     close_sys(file_fd)
-
-    if (bytes_read.lo <= 0) {
-      log('Cannot read file: ' + filepath)
-      return
-    }
-
-    // Build response string from buffer
-    let body = ''
-    for (let i = 0; i < bytes_read.lo; i++) {
-      body += String.fromCharCode(mem.view(file_buf).getUint8(i))
-    }
-
-    send_response(fd, content_type, body)
-    log('Sent ' + filepath + ' (' + bytes_read.lo + ' bytes)')
+    log('Sent ' + filepath + ' Total: ' + total_sent + ' bytes')
   }
 
   // Parse request path
