@@ -44,8 +44,8 @@ import { fn, BigInt, mem } from 'download0/types'
 
   // ===== VIDEO CONFIGURATION =====
   const VIDEO_DIR = '/download0/vid'
-  const PLAYLIST_FILE = 'cat-meow.m3u8'
-  const SEGMENT_FILES = ['cat-meow0.ts']
+  const PLAYLIST_FILE = 'output.m3u8'
+  const SEGMENT_FILES = ['output0.ts', 'output1.ts', 'output2.ts', 'output3.ts', 'output4.ts', 'output5.ts', 'output6.ts', 'output7.ts', 'output8.ts', 'output9.ts', 'output10.ts', 'output11.ts', 'output12.ts', 'output13.ts']
   // ================================
 
   // Create server socket
@@ -92,8 +92,8 @@ import { fn, BigInt, mem } from 'download0/types'
   // Setup UI
   jsmaf.root.children.length = 0
 
-  // Dual video approach for seamless looping
-  const video1 = new Video({
+  // Single video player
+  const video = new Video({
     x: 0,
     y: 0,
     width: 1920,
@@ -101,26 +101,13 @@ import { fn, BigInt, mem } from 'download0/types'
     visible: true,
     autoplay: true
   })
-  jsmaf.root.children.push(video1)
-
-  const video2 = new Video({
-    x: 0,
-    y: 0,
-    width: 1920,
-    height: 1080,
-    visible: false,
-    autoplay: false
-  })
-  jsmaf.root.children.push(video2)
+  jsmaf.root.children.push(video)
 
   let requestCount = 0
-  let currentVideo = video1
-  let nextVideo = video2
-  let preloadStarted = false
 
-  function setupVideoCallbacks (video: Video, isNext: boolean) {
+  function setupVideoCallbacks () {
     video.onOpen = function () {
-      log('Video ' + (isNext ? 'next' : 'current') + ' opened! Duration: ' + video.duration)
+      log('Video opened! Duration: ' + video.duration)
     }
 
     video.onerror = function (err) {
@@ -128,28 +115,15 @@ import { fn, BigInt, mem } from 'download0/types'
     }
 
     video.onstatechange = function (state) {
-      log('Video ' + (video === currentVideo ? 'current' : 'next') + ' state: ' + state)
+      log('Video state: ' + state)
 
-      if (video === currentVideo && state === 'Ended') {
-        log('Swapping to next video...')
-        // Hide current, show next
-        currentVideo.visible = false
-        nextVideo.visible = true
-        nextVideo.play()
-
-        // Swap references
-        const temp = currentVideo
-        currentVideo = nextVideo
-        nextVideo = temp
-
-        // Start preloading the next loop immediately
-        preloadStarted = false
+      if (state === 'Ended') {
+        log('Video playback finished')
       }
     }
   }
 
-  setupVideoCallbacks(video1, false)
-  setupVideoCallbacks(video2, true)
+  setupVideoCallbacks()
 
   // Send HTTP response
   function send_response (fd: number, content_type: string, body: string) {
@@ -302,19 +276,9 @@ import { fn, BigInt, mem } from 'download0/types'
     }
   }
 
-  // Monitor playback and preload next video near the end
+  // Monitor server
   jsmaf.onEnterFrame = function () {
     serverLoop()
-
-    if (currentVideo.duration > 0 && currentVideo.elapsed > 0) {
-      // Start preloading when 70% through current video
-      const threshold = currentVideo.duration * 0.7
-      if (!preloadStarted && currentVideo.elapsed >= threshold) {
-        log('Preloading next video at ' + currentVideo.elapsed + 'ms...')
-        preloadStarted = true
-        nextVideo.open(videoUrl)
-      }
-    }
   }
 
   let isShuttingDown = false
@@ -342,19 +306,12 @@ import { fn, BigInt, mem } from 'download0/types'
         log('Error closing server socket: ' + (e as Error).message)
       }
 
-      // Close video players
+      // Close video player
       try {
-        currentVideo.close()
-        log('Current video closed')
+        video.close()
+        log('Video closed')
       } catch (e) {
-        log('Error closing current video: ' + (e as Error).message)
-      }
-
-      try {
-        nextVideo.close()
-        log('Next video closed')
-      } catch (e) {
-        log('Error closing next video: ' + (e as Error).message)
+        log('Error closing video: ' + (e as Error).message)
       }
 
       // Clear handlers
@@ -373,9 +330,9 @@ import { fn, BigInt, mem } from 'download0/types'
   }
 
   log('Server ready! Using select() for non-blocking I/O.')
-  log('Starting seamless looping video...')
+  log('Starting video playback...')
   log('Video URL: ' + videoUrl)
 
-  // Auto-start first video
-  video1.open(videoUrl)
+  // Auto-start video
+  video.open(videoUrl)
 })()
