@@ -23,13 +23,13 @@ log('All scripts loaded')
 
 export function show_success (immediate?: boolean) {
   if (immediate) {
-  var sss = new Image({
-      url: "file:///../download0/img/bass.jpg",
+    var sss = new Image({
+      url: 'file:///../download0/img/bass.jpg',
       x: 0,
-      y: 0, 
+      y: 0,
       width: 1920,
       height: 1080
-    });
+    })
 
 
     jsmaf.root.children.push(sss)
