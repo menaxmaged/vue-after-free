@@ -207,11 +207,6 @@ jobs:
           name: download0.dat
           path: download0.dat
 
-      - name: Delete dist artifact
-        uses: geekyeggo/delete-artifact@v5
-        with:
-          name: dist
-
       - name: Upload UFS2 release asset
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
@@ -273,11 +268,6 @@ jobs:
         with:
           name: download0_dat_lite
           path: download0_dat_lite.zip
-
-      - name: Delete lite dist artifact
-        uses: geekyeggo/delete-artifact@v5
-        with:
-          name: dist-lite
 
       - name: Upload lite UFS2 release asset
         if: github.event_name == 'release'
