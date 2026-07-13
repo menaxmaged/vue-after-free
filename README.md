@@ -8,7 +8,6 @@
 </p>
 
 
-
 > [!NOTE]
 > **Need help or having issues?** [Join the discord](https://discord.gg/asBgEtjjVt)
 
